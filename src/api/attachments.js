@@ -1,4 +1,4 @@
-import { api } from '../lib/api.js';
+import { api, API_BASE_URL } from '../lib/api.js';
 
 export const attachmentsApi = {
   list: (tripId, parentType, parentId) => {
@@ -14,7 +14,7 @@ export const attachmentsApi = {
     form.append('parentType', parentType);
     if (parentId) form.append('parentId', parentId);
 
-    const res = await fetch(`/api/trips/${tripId}/attachments`, {
+    const res = await fetch(`${API_BASE_URL}/trips/${tripId}/attachments`, {
       method: 'POST',
       credentials: 'include',
       body: form,
@@ -27,6 +27,6 @@ export const attachmentsApi = {
 
     return res.json();
   },
-  downloadUrl: (attachmentId) => `/api/attachments/${attachmentId}/download`,
+  downloadUrl: (attachmentId) => `${API_BASE_URL}/attachments/${attachmentId}/download`,
   delete: (attachmentId) => api.delete(`/attachments/${attachmentId}`),
 };

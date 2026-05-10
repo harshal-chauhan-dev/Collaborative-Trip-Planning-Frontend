@@ -1,4 +1,4 @@
-const BASE_URL = '/api';
+import { API_BASE_URL } from './env.js';
 
 class ApiError extends Error {
   constructor(message, status, code, details) {
@@ -23,7 +23,7 @@ const request = async (method, path, data) => {
     options.body = JSON.stringify(data);
   }
 
-  const res = await fetch(`${BASE_URL}${path}`, options);
+  const res = await fetch(`${API_BASE_URL}${path}`, options);
 
   if (res.status === 204) return null;
 
@@ -44,4 +44,4 @@ export const api = {
   delete: (path) => request('DELETE', path),
 };
 
-export { ApiError };
+export { ApiError, API_BASE_URL };

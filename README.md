@@ -12,17 +12,30 @@ SPA for collaborative trip planning. **React 18**, **Vite**, **Tailwind CSS v4**
 npm install
 ```
 
-No env file is required for default local development.
+Copy `.env.example` if you want a template; committed defaults live in `.env.development` and `.env.production`.
+
+## Environment variables
+
+Vite only exposes variables prefixed with `VITE_`. The app reads them in `src/lib/env.js`.
+
+| Variable | Mode | Purpose |
+|----------|------|---------|
+| `VITE_API_ORIGIN` | Usually production | Public backend origin **without** `/api`. When unset, requests use relative `/api`. |
+| `VITE_DEV_PROXY_TARGET` | Development | Where Vite proxies `/api` (default `http://localhost:3000` if omitted). |
+
+Production builds load `.env.production` (tracked example points at Render). Local overrides: create `.env.local` (gitignored).
+
+All HTTP calls go through `src/lib/api.js`, which uses `API_BASE_URL` from `env.js`. Import `API_BASE_URL` from `lib/api.js` if you need the same base for a raw `fetch` (see `src/api/attachments.js`).
 
 ## Development
 
-Start the **backend** on port `3000`, then:
+Start the **backend** (default proxy target is port `3000`), then:
 
 ```bash
 npm run dev
 ```
 
-The app loads at `http://localhost:5173`. Vite proxies requests from `/api` to `http://localhost:3000` (see `vite.config.js`), and `src/lib/api.js` uses `/api` as the fetch base so cookies stay same-origin during dev.
+The app loads at `http://localhost:5173`. With `VITE_API_ORIGIN` unset, the UI calls `/api`, and Vite forwards those requests to `VITE_DEV_PROXY_TARGET`.
 
 ## Production build
 
@@ -31,12 +44,7 @@ npm run build
 npm run preview   # optional: local preview of dist/
 ```
 
-`npm run build` outputs static assets under `dist/`. If you host the UI on a different origin than the API, you must either:
-
-- Put a reverse proxy in front so browser requests still go to `/api` on the same host as the SPA, **or**
-- Change the fetch base in `src/lib/api.js` (and any raw `fetch` URLs such as in `src/api/attachments.js`) to your deployed API URL, including the `/api` prefix (e.g. `https://your-api.example.com/api`).
-
-Also set the backend `CORS_ORIGIN` to your deployed frontend URL.
+Set `VITE_API_ORIGIN` in `.env.production` (or your host’s env) to your deployed API origin. Configure the backend **`CORS_ORIGIN`** to match your deployed frontend URL.
 
 ## Scripts
 
@@ -53,6 +61,7 @@ Also set the backend `CORS_ORIGIN` to your deployed frontend URL.
 - `src/pages/` — Route screens  
 - `src/components/` — Shared UI  
 - `src/context/AuthContext.jsx` — Session state  
+- `src/lib/env.js` — `API_BASE_URL` from `import.meta.env`  
 - `src/lib/api.js` — HTTP client (`credentials: 'include'` for cookies)  
 - `src/lib/ui.js` — Shared Tailwind class helpers  
 - `src/styles/globals.css` — Tailwind entry + base styles  
