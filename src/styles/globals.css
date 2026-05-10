@@ -1,0 +1,15 @@
+@import 'tailwindcss';
+
+@layer base {
+  body {
+    @apply min-h-screen bg-gray-50 font-sans text-sm leading-normal text-gray-900 antialiased;
+  }
+
+  a {
+    @apply text-blue-600 underline-offset-2 hover:underline;
+  }
+
+  button:not(:disabled) {
+    @apply cursor-pointer;
+  }
+}
